@@ -1,3 +1,4 @@
+import os
 import asyncio
 import aiohttp
 from loguru import logger
@@ -6,10 +7,23 @@ from storage import Storage
 
 # Параметры
 PROXY_TEST_URL = "https://httpbin.org/ip"  # Заглушка URL для тестирования прокси
-LOG_FILE = "log.txt"
+
+LOG_DIR = "logs"
+LOG_FILE = os.path.join(LOG_DIR, "log.txt")
+
+# Создаем папку, если она не существует
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
 
 # Настройка логирования
-logger.add(LOG_FILE, rotation="1 hour", retention="7 days", compression="zip")
+logger.add(
+    LOG_FILE,
+    rotation="1 hour",  # Архивируем логи каждый час
+    retention="7 days",  # Храним логи 7 дней
+    compression="zip",  # Архивируем логи в формате zip
+    encoding="utf-8",  # Кодировка файлов
+    level="DEBUG",
+)  # Уровень логирования
 
 storage = Storage()
 proxies = [proxy for proxy in Proxy.from_txt("proxies.txt")]
