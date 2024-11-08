@@ -72,8 +72,13 @@ async def process(user: User):
         # Если прокси недоступен, присваиваем None, останавливаем цикл
         if proxy and not await is_proxy_valid(proxy):
             logger.info(f"Прокси {proxy} для {user.email} невалиден, удаляем.")
-            await storage.update_user_proxy(user.email, None)
-            proxy = None
+            try:
+                await storage.update_user_proxy(user.email, None)
+
+            except:
+                pass
+            finally:
+                proxy = None
 
         # Если прокси None, назначаем новый проверенный прокси
         if proxy is None:
